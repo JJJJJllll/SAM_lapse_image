@@ -43,14 +43,16 @@ predictor = SamPredictor(sam)
 predictor.set_image(image)  
 
 '''choose a point on image'''
-x, y = 0, 0
+list_x, list_y = [], []
 fig, ax = plt.subplots()
 ax.imshow(image)
 
 def onclick(event):
     if event.dblclick: # 双击
-        global x, y
+        global list_x, list_y
         x, y = int(event.xdata), int(event.ydata)
+        list_x.append(x)
+        list_y.append(y)
         print(f'像素位置: x={x}, y={y}')
         ax.plot(x, y, 'ro')  # 在点击位置画一个红点
         plt.draw()
@@ -60,8 +62,9 @@ fig.canvas.mpl_connect('button_press_event', onclick)
 plt.show()  
 
 '''choose a point as input'''
-input_point = np.array([[x, y]])
-input_label = np.array([1])
+input_point = np.array([[x, y] for x, y in zip(list_x, list_y)])
+input_label = np.ones(len(list_x))
+input_label[-2:] = 0
 
 plt.figure(figsize=(10,10))
 plt.imshow(image)
